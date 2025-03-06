@@ -22,7 +22,7 @@ module regfile(
     reg [`RegBus] regs [`RegNum-1:1];
 
     // regfile write logic
-    always @(posedge clk or posedge rst) begin
+    always @(posedge clk) begin
         if (rst == `RstDisable)  begin
             // dont write to no.1 reg
             if (we == `WriteEnable && waddr != `RegNum'h0) begin
@@ -44,7 +44,7 @@ module regfile(
             rdata1 = wdata;
         end
         else if (re1 == `ReadEnable) begin
-            rdata1 = regs[addr1];
+            rdata1 = regs[raddr1];
         end
         else begin
             rdata1 = `ZeroWord;
@@ -64,7 +64,7 @@ module regfile(
             rdata2 = wdata;
         end
         else if (re2 == `ReadEnable) begin
-            rdata2 = regs[addr2];
+            rdata2 = regs[raddr2];
         end
         else begin
             rdata2 = `ZeroWord;

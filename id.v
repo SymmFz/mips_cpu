@@ -2,7 +2,7 @@
 
 module id(
     input   wire                    rst,
-    input   wire    [`RegAddrBus]   pc_i,
+    input   wire    [`InstAddrBus]  pc_i,
     input   wire    [`InstBus]      inst_i,
 
     // values input from regfile

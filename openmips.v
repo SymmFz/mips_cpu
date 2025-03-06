@@ -85,7 +85,7 @@ module openmips(
     // ID
     id u_id(
         .rst            (rst),
-        .pc_i           (clk),   
+        .pc_i           (id_pc_i),   
         .inst_i         (id_inst_i), 
         .reg1_data_i    (reg1_data),
         .reg2_data_i    (reg2_data),
@@ -127,7 +127,7 @@ module openmips(
         .id_reg1        (id_reg1_o),
         .id_reg2        (id_reg2_o),
         .id_wd          (id_wd_o),
-        .id_wreg        (iwd_wreg_o),
+        .id_wreg        (id_wreg_o),
         .ex_alusel      (ex_alusel_i),
         .ex_aluop       (ex_aluop_i ),
         .ex_reg1        (ex_reg1_i  ),

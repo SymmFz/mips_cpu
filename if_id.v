@@ -16,7 +16,7 @@ module if_id(
     );
 
     always @(posedge clk or posedge rst) begin
-        if (rst == `ChipDisable) begin
+        if (rst == `RstEnable) begin
             id_pc <= `ZeroWord;
         end
         else begin
@@ -25,7 +25,7 @@ module if_id(
     end
 
     always @(posedge clk or posedge rst) begin
-        if (rst == `ChipDisable) begin
+        if (rst == `RstEnable) begin
             id_inst <= `ZeroWord;
         end
         else begin

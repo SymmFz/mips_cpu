@@ -1,3 +1,7 @@
-netlist/**
-icarus/**
+netlist
+icarus
+xsim.dir
+
+
 terosHDL_projects.yaml
+a.out
