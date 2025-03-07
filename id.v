@@ -1,5 +1,6 @@
 `include "defines.vh"
 
+// TODO: 解决 Load-Use 数据前递（前递前需要阻塞一个周期）
 module id(
     input   wire                    rst,
     input   wire    [`InstAddrBus]  pc_i,
@@ -21,7 +22,17 @@ module id(
     output  reg     [`RegBus]       reg1_o,
     output  reg     [`RegBus]       reg2_o,
     output  reg     [`RegAddrBus]   wd_o,
-    output  reg                     wreg_o
+    output  reg                     wreg_o,
+
+    // data forward: RAW situation between ID and EX stage
+    input  wire                     ex_wreg_i,
+    input  wire     [`RegBus]       ex_wdata_i,
+    input  wire     [`RegAddrBus]   ex_wd_i,
+
+    // data forward: RAW situation between ID and MEM stage
+    input  wire                     mem_wreg_i,
+    input  wire     [`RegBus]       mem_wdata_i,
+    input  wire     [`RegAddrBus]   mem_wd_i
 );
 
     // 取得指令的指令码和功能码
@@ -64,7 +75,7 @@ module id(
 
             case(op)
                 `EXE_ORI:   begin
-                    wreg_o      <= `WriteEnable;
+                    wreg_o      <= 1'b1;
                     aluop_o     <= `EXE_OR_OP;
                     alusel_o    <= `EXE_RES_LOGIC;
                     reg1_read_o <= 1'b1;
@@ -86,7 +97,16 @@ module id(
     always @(*) begin
         if (rst == `RstEnable) begin
             reg1_o <= `ZeroWord;
-        end else if (reg1_read_o == 1'b1) begin
+        end
+        // data forward: 提前将 EX 阶段的运算结果前递到 ID 阶段作为寄存器 1 读取结果
+        else if ((ex_wreg_i == 1'b1) && (reg1_read_o == 1'b1) && (ex_wd_i == reg1_addr_o)) begin
+            reg1_o <= ex_wdata_i;
+        end
+        // data forward: 提前将 MEM 阶段的运算结果前递到 ID 阶段作为寄存器 1 读取结果
+        else if ((mem_wreg_i == 1'b1) && (reg1_read_o == 1'b1) && (mem_wd_i == reg1_addr_o)) begin
+            reg1_o <= mem_wdata_i;
+        end
+        else if (reg1_read_o == 1'b1) begin
             reg1_o <= reg1_data_i;
         end else if (reg1_read_o == 1'b0) begin
             reg1_o <= imm;
@@ -101,7 +121,16 @@ module id(
     always @(*) begin
         if (rst == `RstEnable) begin
             reg2_o <= `ZeroWord;
-        end else if (reg2_read_o == 1'b1) begin
+        end 
+        // data forward: 提前将 EX 阶段的运算结果前递到 ID 阶段作为寄存器 2 读取结果
+        else if ((ex_wreg_i == 1'b1) && (reg2_read_o == 1'b1) && (ex_wd_i == reg2_addr_o)) begin
+            reg2_o <= ex_wdata_i;
+        end
+        // data forward: 提前将 MEM 阶段的运算结果前递到 ID 阶段作为寄存器 2 读取结果
+        else if ((mem_wreg_i == 1'b1) && (reg2_read_o == 1'b1) && (mem_wd_i == reg2_addr_o)) begin
+            reg2_o <= mem_wdata_i;
+        end
+        else if (reg2_read_o == 1'b1) begin
             reg2_o <= reg2_data_i;
         end else if (reg2_read_o == 1'b0) begin
             reg2_o <= imm;

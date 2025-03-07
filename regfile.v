@@ -40,7 +40,7 @@ module regfile(
             rdata1 = `ZeroWord;
         end
         else if ((raddr1 == waddr) && we == `WriteEnable &&
-                 re1 == `ReadEnable) begin
+                 re1 == `ReadEnable) begin          // 流水线译码、写回阶段 RAW 冒险的数据前递
             rdata1 = wdata;
         end
         else if (re1 == `ReadEnable) begin
@@ -60,7 +60,7 @@ module regfile(
             rdata2 = `ZeroWord;
         end
         else if ((raddr2 == waddr) && we == `WriteEnable &&
-                 re2 == `ReadEnable) begin
+                 re2 == `ReadEnable) begin          // 流水线译码、写回阶段 RAW 冒险的数据前递
             rdata2 = wdata;
         end
         else if (re2 == `ReadEnable) begin
