@@ -35,21 +35,35 @@ module openmips(
     wire                ex_wreg_o;
     wire [`RegAddrBus]  ex_wd_o;
     wire [`RegBus]      ex_wdata_o;
+    wire                ex_whilo_o;
+    wire [`RegBus]      ex_hi_o;
+    wire [`RegBus]      ex_lo_o;
 
     // 链接 EX/MEM 模块的输出与 MEM 模块的输入的变量
     wire                mem_wreg_i;
     wire [`RegAddrBus]  mem_wd_i;
     wire [`RegBus]      mem_wdata_i;
+    wire                mem_whilo_i;
+    wire [`RegBus]      mem_hi_i;
+    wire [`RegBus]      mem_lo_i;
 
     // 链接访存阶段 MEM 模块的输出与 MEM/WB 模块的输入的变量
     wire                mem_wreg_o;
     wire [`RegAddrBus]  mem_wd_o;
     wire [`RegBus]      mem_wdata_o;
+    wire                mem_whilo_o;
+    wire [`RegBus]      mem_hi_o;
+    wire [`RegBus]      mem_lo_o;
+
 
     // 链接 MEM/WB 模块的输出与写回阶段的输入的变量
     wire                wb_wreg_i;
     wire [`RegAddrBus]  wb_wd_i;
     wire [`RegBus]      wb_wdata_i;
+    wire                wb_whilo_i;
+    wire [`RegBus]      wb_hi_i;
+    wire [`RegBus]      wb_lo_i;   
+
 
     // 链接译码阶段 ID 模块与通用寄存器 regfile 模块的变量
     wire                reg1_read;
@@ -59,6 +73,9 @@ module openmips(
     wire [`RegBus]      reg1_data;
     wire [`RegBus]      reg2_data;
 
+    // 链接写回阶段 HI,LO 寄存器的输出与执行阶段 ex 模块的输入
+    wire [`RegBus]      hi;
+    wire [`RegBus]      lo;
 
 
     // pc_reg 模块
@@ -155,6 +172,20 @@ module openmips(
         .reg2_i        (ex_reg2_i ),
         .wd_i          (ex_wd_i   ),
         .wreg_i        (ex_wreg_i ),
+        // hi,lo reg input
+        .hi_i          (hi),
+        .lo_i          (lo),
+        .wb_whilo_i    (wb_whilo_i),
+        .wb_hi_i       (wb_hi_i),
+        .wb_lo_i       (wb_lo_i),
+        .mem_whilo_i   (mem_whilo_o),
+        .mem_hi_i      (mem_hi_o),
+        .mem_lo_i      (mem_lo_o),
+        
+        .whilo_o       (ex_whilo_o),
+        .hi_o          (ex_hi_o),
+        .lo_o          (ex_lo_o),
+
         .wd_o          (ex_wd_o   ),
         .wreg_o        (ex_wreg_o ),
         .wdata_o       (ex_wdata_o)
@@ -168,9 +199,15 @@ module openmips(
         .ex_wd          (ex_wd_o    ),
         .ex_wreg        (ex_wreg_o  ),
         .ex_wdata       (ex_wdata_o ),
+        .ex_whilo       (ex_whilo_o),
+        .ex_hi          (ex_hi_o),
+        .ex_lo          (ex_lo_o),
         .mem_wd         (mem_wd_i   ),
         .mem_wreg       (mem_wreg_i ),
-        .mem_wdata      (mem_wdata_i)
+        .mem_wdata      (mem_wdata_i),
+        .mem_whilo      (mem_whilo_i),
+        .mem_hi         (mem_hi_i),
+        .mem_lo         (mem_lo_i)
     );
 
     // mem
@@ -179,9 +216,15 @@ module openmips(
         .wd_i        (mem_wd_i    ),
         .wreg_i      (mem_wreg_i  ),
         .wdata_i     (mem_wdata_i ),
+        .whilo_i     (mem_whilo_i),
+        .hi_i        (mem_hi_i),
+        .lo_i        (mem_lo_i),
         .wd_o        (mem_wd_o   ),
         .wreg_o      (mem_wreg_o ),
-        .wdata_o     (mem_wdata_o)
+        .wdata_o     (mem_wdata_o),
+        .whilo_o     (mem_whilo_o),
+        .hi_o        (mem_hi_o),
+        .lo_o        (mem_lo_o)
     );
 
     // mem/wb
@@ -191,9 +234,26 @@ module openmips(
         .mem_wd         (mem_wd_o),
         .mem_wreg       (mem_wreg_o ),
         .mem_wdata      (mem_wdata_o),
+        .mem_whilo      (mem_whilo_o),
+        .mem_hi         (mem_hi_o),
+        .mem_lo         (mem_lo_o),
         .wb_wd          (wb_wd_i    ),
         .wb_wreg        (wb_wreg_i  ),
-        .wb_wdata       (wb_wdata_i )
+        .wb_wdata       (wb_wdata_i ),
+        .wb_whilo       (wb_whilo_i),
+        .wb_hi          (wb_hi_i),
+        .wb_lo          (wb_lo_i)
+    );
+
+    // hilo reg
+    hilo_reg u_hilo_reg(
+        .rst        (rst),
+        .clk        (clk),
+        .we         (wb_whilo_i),
+        .hi_i       (wb_hi_i),
+        .lo_i       (wb_lo_i),
+        .hi_o       (hi),
+        .lo_o       (lo)
     );
 
 endmodule
