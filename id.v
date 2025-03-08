@@ -48,7 +48,7 @@ module id(
     reg instvalid;
 
     // ***** 1st stage: decode the instruction *****
-
+    // TODO: 可能要考虑使用阻塞赋值
     always @(*) begin
         if (rst == `RstEnable) begin
             aluop_o     <= `EXE_NOP_OP;

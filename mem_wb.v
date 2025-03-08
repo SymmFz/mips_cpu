@@ -27,21 +27,21 @@ module mem_wb(
 
     always @(posedge clk or posedge rst) begin
         if (rst == `RstEnable) begin
-            wb_wd    = `NOPRegAddr;
-            wb_wreg  = `WriteDisable;
-            wb_wdata = `ZeroWord;
+            wb_wd    <= `NOPRegAddr;
+            wb_wreg  <= `WriteDisable;
+            wb_wdata <= `ZeroWord;
 
-            wb_whilo = `WriteDisable;
-            wb_hi    = `ZeroWord;
-            wb_lo    = `ZeroWord;
+            wb_whilo <= `WriteDisable;
+            wb_hi    <= `ZeroWord;
+            wb_lo    <= `ZeroWord;
         end else begin
-            wb_wd    = mem_wd;
-            wb_wreg  = mem_wreg;
-            wb_wdata = mem_wdata;
+            wb_wd    <= mem_wd;
+            wb_wreg  <= mem_wreg;
+            wb_wdata <= mem_wdata;
 
-            wb_whilo = mem_whilo;
-            wb_hi    = mem_hi;
-            wb_lo    = mem_lo;
+            wb_whilo <= mem_whilo;
+            wb_hi    <= mem_hi;
+            wb_lo    <= mem_lo;
         end
     end
 
