@@ -61,7 +61,7 @@ module ex(
                 `EXE_SRL_OP: begin
                     shiftres = reg2_i >> reg1_i[4:0];   // 逻辑右移
                 end
-                `EXE_SRA_OP: begin  // 算数右移
+                `EXE_SRA_OP: begin                      // 算数右移
                     shiftres = ({32{reg2_i[31]}} << 6'd32 - {1'b0, reg1_i[4:0]})
                                 | reg2_i >> reg1_i[4:0];
                 end

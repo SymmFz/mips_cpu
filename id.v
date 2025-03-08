@@ -135,7 +135,7 @@ module id(
                                     instvalid   <= `InstValid;
                                 end
                                 `EXE_SYNC:    begin                         // sync
-                                    wreg_o      <= `WriteEnable;
+                                    wreg_o      <= `WriteDisable;
                                     aluop_o     <= `EXE_NOP_OP;
                                     alusel_o    <= `EXE_RES_NOP;
                                     reg1_read_o <= 1'b1;
